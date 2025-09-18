@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendrier de l'Avent Romantique</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: 
+                linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%),
+                url('https://drive.google.com/uc?export=view&id=126XZhsxo366apgJiIrjEnr5rQvLFAtZK') center/cover no-repeat;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .hearts-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .heart {
+            position: absolute;
+            color: #ff69b4;
+            font-size: 20px;
+            animation: fall linear infinite;
+            opacity: 0.8;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .title h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .title h1:hover {
+            transform: scale(1.05);
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+        }
+
+        /* Compteur de jours */
+        .days-counter {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px 25px;
+            border-radius: 15px;
+            margin-top: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .counter-text {
+            font-size: 1rem;
+            color: #fff;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .counter-number {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            color: #ffeb3b;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(255, 235, 59, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        .counter-label {
+            font-size: 0.9rem;
+            color: #fff;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Pluie d'étoiles filantes */
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .calendar-day:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        .calendar-day.opened {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-color: #4ecdc4;
+        }
+
+        .day-number {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+
+        .day-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            text-align: center;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.4s ease;
+            border-radius: 12px;
+        }
+
+        .day-content.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .day-message {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.1rem;
+            color: #333;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        /* Cœurs voltigeant autour des cases */
+        .floating-heart {
+            position: absolute;
+            font-size: 12px;
+            color: #ff69b4;
+            pointer-events: none;
+            animation: floatAround 4s infinite ease-in-out;
+            z-index: 3;
+        }
+
+        .floating-bento {
+            position: absolute;
+            font-size: 12px;
+            pointer-events: none;
+            animation: floatAround 4s infinite ease-in-out;
+            z-index: 3;
+        }
+
+        @keyframes floatAround {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+                opacity: 0.7;
+            }
+            25% {
+                transform: translate(20px, -15px) rotate(90deg);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(0, -30px) rotate(180deg);
+                opacity: 0.8;
+            }
+            75% {
+                transform: translate(-20px, -15px) rotate(270deg);
+                opacity: 1;
+            }
+        }
+
+
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #fff 0%, #f8f9ff 100%);
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+            border: 2px solid rgba(255, 105, 180, 0.3);
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2rem;
+            color: #ff69b4;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .modal p {
+            font-size: 1.2rem;
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            font-family: 'Dancing Script', cursive;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.4);
+        }
+
+        /* Effet de scintillement sur les cases non ouvertes */
+        .calendar-day:not(.opened)::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            animation: sparkle 2s infinite;
+            box-shadow: 0 0 6px #fff;
+        }
+
+        .calendar-day:not(.opened)::after {
+            content: '';
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            width: 6px;
+            height: 6px;
+            background: #ffeb3b;
+            border-radius: 50%;
+            animation: sparkle 2.5s infinite 0.5s;
+            box-shadow: 0 0 4px #ffeb3b;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Particules dorées au survol */
+        .golden-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #ffd700;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: floatUp 1.5s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(0);
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(-30px) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-60px) scale(0);
+            }
+        }
+
+        /* Bouton Je t'aime */
+        .love-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+            transition: all 0.3s ease;
+            z-index: 100;
+            font-family: 'Dancing Script', cursive;
+        }
+
+        .love-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+        }
+
+        /* Galerie de photos */
+        .photo-gallery {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .photo-gallery.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .gallery-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+
+        .photo-gallery.show .gallery-content {
+            transform: scale(1);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .gallery-photo {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-photo:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .title h1 {
+                font-size: 1.8rem;
+            }
+            
+            .calendar-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 15px;
+            }
+            
+            .day-number {
+                font-size: 1.5rem;
+            }
+            
+            .day-message {
+                font-size: 0.9rem;
+            }
+
+            .love-button {
+                bottom: 20px;
+                right: 20px;
+                padding: 12px 20px;
+                font-size: 1rem;
+            }
+
+
+
+            .counter-number {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hearts-container" id="heartsContainer"></div>
+    
+
+    
+    <div class="container">
+        <div class="title">
+            <h1 id="titleElement">Happy 3 months my love, Feliz 3 meses meu amor ❤️</h1>
+            <div class="days-counter">
+                <div class="counter-text">Together since</div>
+                <div class="counter-number" id="daysCounter">0</div>
+                <div class="counter-label">Beautiful Days ✨</div>
+            </div>
+        </div>
+        
+        <div class="calendar-grid" id="calendarGrid"></div>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle">Jour 1</h2>
+            <p id="modalMessage"></p>
+            <button class="close-btn" onclick="closeModal()">Close ❤️</button>
+        </div>
+    </div>
+
+    <!-- Galerie de photos -->
+    <div class="photo-gallery" id="photoGallery">
+        <div class="gallery-content">
+            <h2 style="font-family: 'Dancing Script', cursive; color: #ff69b4; margin-bottom: 20px;">Our Beautiful Memories 📸</h2>
+            <div class="gallery-grid">
+                <div class="gallery-photo"><img src="images/photo1.jpg" alt="Photo 1" style="width:100%;height:100%;object-fit:cover;border-radius:10px;"></div>
+                <div class="gallery-photo"><img src="images/photo2.jpg" alt="Photo 2" style="width:100%;height:100%;object-fit:cover;border-radius:10px;"></div>
+                <div class="gallery-photo"><img src="images/photo3.jpg" alt="Photo 3" style="width:100%;height:100%;object-fit:cover;border-radius:10px;"></div>
+                <div class="gallery-photo"><img src="images/photo4.jpg" alt="Photo 4" style="width:100%;height:100%;object-fit:cover;border-radius:10px;"></div>
+                <div class="gallery-photo"><img src="images/photo5.jpg" alt="Photo 5" style="width:100%;height:100%;object-fit:cover;border-radius:10px;"></div>
+                <div class="gallery-photo"><img src="images/photo6.jpg" alt="Photo 6" style="width:100%;height:100%;object-fit:cover;border-radius:10px;"></div>
+            </div>
+            <p style="color: #666; margin-bottom: 20px; font-style: italic;">I love you so much baby, remember of the photo of the first day we met! I hope you like this little photo gallery! ❤️</p>
+            <button class="close-btn" onclick="closeGallery()">Close ❤️</button>
+        </div>
+    </div>
+
+    <!-- Bouton Je t'aime -->
+    <button class="love-button" onclick="loveExplosion()">Je t'aime ! 💕</button>
+
+    <script>
+        const loveMessages = {
+            1: "Happy 3 months my love, 3 months that we're together and i'm so happy to be in a romantic relationship with you ❤️",
+            2: "Each day i'm with you, is another day that i love you more and more 💕",
+            3: "You're so perfect my petite éclaire, you deserve the world 💋",
+            4: "I'm so proud of you my baby, really, you're so strong and courageous, continue like this baby, i see how much efforts you put everyday, and i'm proud of you 😘",
+            5: "Babe I want you to be sure that I love all your flaws and insecurities, because for me you don't have anything, you're just so perfect my love, really ✨",
+            6: "I love your energy baby, like how chill we're together, and when we dance together in call, we always laugh together, so much to say about your energy baby 🌸",
+            7: "Since the day we met, I love how we are together, I just love us, we're so cute together 🥰",
+            8: "Every time I give a compliment, it comes from the bottom of my heart and it's really true, baby, I love you, have a good day my love 💓",
+            9: "I'm so proud on how we evolve everyday together, omggg I love us, woo hoooo, have a good day. Oh and here Bento, babeee we have to take more care about Bento🧌",
+            10: "Oi meu amor!! Sim, hoje é em português, quero que saiba que estou aqui para você meu amor, o tempo todo, saiba que estou sempre ao seu lado 🫶",
+            11: "Hellooooo babyyy, i'm so so happy to play with you everyday, it make me so happy to have fun with you on games, oh and you're so good at Fortnite whatever you say🌹",
+            12: "You are my sun in my life baby, each day i'm with you, my day is better 🌞",
+            13: "Omggg I'm so excited to come see you in Natal, and every day that passes brings us closer to that moment 😍",
+            14: "Hey baby, do you remember when we were playing until like 6am on therapy and when you tell me that the crazy sound was the car of your dad😄",
+            15: "Baby, I love you so much, like you have no idea on how much I love you, I can't explain my love because it's more than infinity❣️",
+            16: "Oi meu amor, você é o amor da minha vida e mal posso esperar para vivenciar todas as nossas futuras aventuras juntos, eu te amo, seu namorado 💌",
+            17: "J'ai compris c'est quoi l'amour avec toi, et c'est quelque chose de magnifique, vivre ça avec toi l'est encore plus, je t'aime 💘",
+            18: "You are the most beautiful and best thing that happened to me this year, having found you, I love you my love 🥳",
+            19: "You're the girl that I dream to have baby, like really you're so perfect, arrhh, I love you so much baby, have a good day!! 💗",
+            20: "Heyyyy babee, i'm soo excited to be with you in person and to dance on French kiss together and being happy and in the vibe! 🕺💃",
+            21: "As the days go by, we get closer to being together in front of the sunset in Natal, kissing and taking pictures. I love you so much, my baby 🌅",
+            22: "Lolooo petite éclaire, I want to tell you something that I really need to say, you know what is it????? that I love you more than you hehe, have a good day my love 💋",
+            23: "Babe a thing that I want to tell you is that you really don't have to think or talk bad about yourself baby, really, you're so perfect and you don't need to have insecurities, because you,re so pretty💐",
+            24: "Hi baby, today is the last day, I hope you enjoyed receiving these little words every day and that they warmed your heart. All these words are truly what I think my love. Here is the last word of this calendar: Thank you my baby, for listening to me every day, for being there for me at every moment of my life, for reassuring me when I need it. Thank you for all the efforts you make when I need it. Thank you for everything my love, I will be forever, truly grateful. I love you ❤️"
+        };
+
+        // Cases spéciales qui ouvrent la galerie (jours 7, 13)
+        const photoGalleryDays = [7, 13];
+
+
+
+        // Calculer les jours ensemble
+        function calculateDaysTogether() {
+            const startDate = new Date('2025-06-18'); // 18 juin 2025
+            const today = new Date();
+            const diffTime = Math.abs(today - startDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays;
+        }
+
+        // Animer le compteur de jours
+        function animateCounter() {
+            const counter = document.getElementById('daysCounter');
+            const targetDays = calculateDaysTogether();
+            let currentDays = 0;
+            
+            const increment = Math.ceil(targetDays / 50);
+            const timer = setInterval(() => {
+                currentDays += increment;
+                if (currentDays >= targetDays) {
+                    currentDays = targetDays;
+                    clearInterval(timer);
+                }
+                counter.textContent = currentDays;
+            }, 50);
+        }
+
+        // Créer la pluie d'étoiles filantes
+        function createShootingStars() {
+            const title = document.getElementById('titleElement');
+            
+            title.addEventListener('mouseenter', () => {
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        const star = document.createElement('div');
+                        star.className = 'shooting-star';
+                        star.style.left = Math.random() * 200 + 'px';
+                        star.style.top = Math.random() * 100 + 'px';
+                        
+                        title.appendChild(star);
+                        
+                        setTimeout(() => star.remove(), 1500);
+                    }, i * 200);
+                }
+            });
+        }
+
+
+
+        // Créer le calendrier
+        function createCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            
+            for (let i = 1; i <= 24; i++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.innerHTML = `
+                    <div class="day-number">${i}</div>
+                    <div class="day-content">
+                        <div class="day-message">${loveMessages[i]}</div>
+                    </div>
+                `;
+                
+                // Ajouter l'événement de survol pour les particules dorées
+                dayElement.addEventListener('mouseenter', (e) => createGoldenParticles(e.target));
+                
+                // Créer les cœurs voltigeant (ou Bento pour la case 9)
+                createFloatingElements(dayElement, i);
+                
+                dayElement.addEventListener('click', () => openDay(i, dayElement));
+                grid.appendChild(dayElement);
+            }
+        }
+
+        // Créer les éléments flottants autour des cases
+        function createFloatingElements(dayElement, dayNumber) {
+            const numElements = 3;
+            
+            for (let i = 0; i < numElements; i++) {
+                const element = document.createElement('div');
+                
+                if (dayNumber === 9) {
+                    element.className = 'floating-bento';
+                    element.innerHTML = '🧌';
+                } else {
+                    element.className = 'floating-heart';
+                    element.innerHTML = ['💕', '💖', '💗'][Math.floor(Math.random() * 3)];
+                }
+                
+                // Position aléatoire autour de la case
+                const angle = (i * 120) + Math.random() * 60;
+                const radius = 80 + Math.random() * 20;
+                const x = Math.cos(angle * Math.PI / 180) * radius;
+                const y = Math.sin(angle * Math.PI / 180) * radius;
+                
+                element.style.left = `calc(50% + ${x}px)`;
+                element.style.top = `calc(50% + ${y}px)`;
+                element.style.animationDelay = Math.random() * 2 + 's';
+                
+                dayElement.appendChild(element);
+            }
+        }
+
+        // Créer des particules dorées au survol
+        function createGoldenParticles(element) {
+            if (element.classList.contains('opened')) return;
+            
+            const rect = element.getBoundingClientRect();
+            
+            for (let i = 0; i < 6; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'golden-particle';
+                    particle.style.left = (rect.left + Math.random() * rect.width) + 'px';
+                    particle.style.top = (rect.top + Math.random() * rect.height) + 'px';
+                    
+                    document.body.appendChild(particle);
+                    
+                    setTimeout(() => particle.remove(), 1500);
+                }, i * 100);
+            }
+        }
+
+        // Ouvrir une case du calendrier
+        function openDay(day, element) {
+            // Empêcher d'ouvrir chaque case avant sa date d'ouverture
+            const today = new Date();
+            const openDates = [
+                new Date(2025, 8, 18), // case 1
+                new Date(2025, 8, 19), // case 2
+                new Date(2025, 8, 20), // case 3
+                new Date(2025, 8, 21), // case 4
+                new Date(2025, 8, 22), // case 5
+                new Date(2025, 8, 23), // case 6
+                new Date(2025, 8, 24), // case 7
+                new Date(2025, 8, 25), // case 8
+                new Date(2025, 8, 26), // case 9
+                new Date(2025, 8, 27), // case 10
+                new Date(2025, 8, 28), // case 11
+                new Date(2025, 8, 29), // case 12
+                new Date(2025, 8, 30), // case 13
+                new Date(2025, 9, 1),  // case 14
+                new Date(2025, 9, 2),  // case 15
+                new Date(2025, 9, 3),  // case 16
+                new Date(2025, 9, 4),  // case 17
+                new Date(2025, 9, 5),  // case 18
+                new Date(2025, 9, 6),  // case 19
+                new Date(2025, 9, 7),  // case 20
+                new Date(2025, 9, 8),  // case 21
+                new Date(2025, 9, 9),  // case 22
+                new Date(2025, 9, 10), // case 23
+                new Date(2025, 9, 11)  // case 24
+            ];
+            if (today < openDates[day - 1]) {
+                const dateStr = openDates[day - 1].toLocaleDateString('fr-FR');
+                alert("😘Baby babyyyyy, what are you doinggggg🤨! You can open the next one this day → 18/09/2025. " + dateStr + ".");
+                return;
+            }
+            if (element.classList.contains('opened')) {
+                if (photoGalleryDays.includes(day)) {
+                    showGallery();
+                } else {
+                    showModal(day, loveMessages[day]);
+                }
+                return;
+            }
+            // Animation de cœurs qui explosent
+            createHeartExplosion(element);
+            element.classList.add('opened');
+            const content = element.querySelector('.day-content');
+            const number = element.querySelector('.day-number');
+            setTimeout(() => {
+                content.classList.add('show');
+                number.style.opacity = '0';
+                // Ajoute le lecteur audio personnalisé si case 18 ou 22
+                if ([18, 22].includes(day)) {
+                    let audioSrc = '';
+                    if (day === 18) audioSrc = 'audio/message18.mp3';
+                    if (day === 22) audioSrc = 'audio/message22.mp3';
+                    if (audioSrc) {
+                        // Crée le conteneur du lecteur audio custom
+                        const audioContainer = document.createElement('div');
+                        audioContainer.style.display = 'flex';
+                        audioContainer.style.justifyContent = 'center';
+                        audioContainer.style.alignItems = 'center';
+                        audioContainer.style.gap = '10px';
+                        audioContainer.style.marginTop = '18px';
+
+                        // Crée l'élément audio caché
+                        const audioPlayer = document.createElement('audio');
+                        audioPlayer.src = audioSrc;
+                        audioPlayer.preload = 'auto';
+                        audioPlayer.style.display = 'none';
+                        audioContainer.appendChild(audioPlayer);
+
+                        // Bouton Lecture
+                        const playBtn = document.createElement('button');
+                        playBtn.textContent = '▶️';
+                        playBtn.title = 'Lecture';
+                        playBtn.style.fontSize = '1.2rem';
+                        playBtn.onclick = () => audioPlayer.play();
+                        audioContainer.appendChild(playBtn);
+
+                        // Bouton Pause
+                        const pauseBtn = document.createElement('button');
+                        pauseBtn.textContent = '⏸️';
+                        pauseBtn.title = 'Pause';
+                        pauseBtn.style.fontSize = '1.2rem';
+                        pauseBtn.onclick = () => audioPlayer.pause();
+                        audioContainer.appendChild(pauseBtn);
+
+                        // Bouton Reculer
+                        const backBtn = document.createElement('button');
+                        backBtn.textContent = '⏪';
+                        backBtn.title = 'Reculer de 10s';
+                        backBtn.style.fontSize = '1.2rem';
+                        backBtn.onclick = () => {
+                            audioPlayer.currentTime = Math.max(0, audioPlayer.currentTime - 10);
+                        };
+                        audioContainer.appendChild(backBtn);
+
+                        // Bouton Avancer
+                        const forwardBtn = document.createElement('button');
+                        forwardBtn.textContent = '⏩';
+                        forwardBtn.title = 'Avancer de 10s';
+                        forwardBtn.style.fontSize = '1.2rem';
+                        forwardBtn.onclick = () => {
+                            audioPlayer.currentTime = Math.min(audioPlayer.duration || 0, audioPlayer.currentTime + 10);
+                        };
+                        audioContainer.appendChild(forwardBtn);
+
+                        // Barre de progression
+                        const progress = document.createElement('input');
+                        progress.type = 'range';
+                        progress.min = 0;
+                        progress.value = 0;
+                        progress.step = 0.1;
+                        progress.style.width = '120px';
+                        progress.style.verticalAlign = 'middle';
+                        audioContainer.appendChild(progress);
+
+                        // Met à jour la barre de progression
+                        audioPlayer.addEventListener('timeupdate', () => {
+                            progress.max = audioPlayer.duration || 0;
+                            progress.value = audioPlayer.currentTime;
+                        });
+                        progress.addEventListener('input', () => {
+                            audioPlayer.currentTime = progress.value;
+                        });
+
+                        content.appendChild(audioContainer);
+                    }
+                }
+            }, 100);
+            setTimeout(() => {
+                if (photoGalleryDays.includes(day)) {
+                    showGallery();
+                } else {
+                    showModal(day, loveMessages[day]);
+                }
+            }, 800);
+        }
+
+        // Afficher la modal avec le message
+        function showModal(day, message) {
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modalTitle');
+            const messageEl = document.getElementById('modalMessage');
+            
+            title.textContent = `Day ${day} ❤️`;
+            messageEl.textContent = message;
+            modal.classList.add('show');
+        }
+
+        // Fermer la modal
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.remove('show');
+        }
+
+        // Afficher la galerie de photos
+        function showGallery() {
+                        const gallery = document.getElementById('photoGallery');
+                        // Détecte le jour ouvert
+                        let lastOpenedDay = null;
+                        for (let i = 1; i <= 24; i++) {
+                                const el = document.querySelector(`.calendar-day:nth-child(${i})`);
+                                if (el && el.classList.contains('opened')) {
+                                        lastOpenedDay = i;
+                                }
+                        }
+                        // Modifie la galerie pour le jour 13
+                        const grid = gallery.querySelector('.gallery-grid');
+                        const title = gallery.querySelector('h2');
+                                    const galleryText = gallery.querySelector('p');
+                                    if (lastOpenedDay === 13) {
+                                            grid.innerHTML = `
+                                                <div class="gallery-photo"><img src="images/natal1.jpg" alt="Natal 1" style="width:100%;height:100%;object-fit:cover;border-radius:10px;"></div>
+                                                <div class="gallery-photo"><img src="images/natal2.jpg" alt="Natal 2" style="width:100%;height:100%;object-fit:cover;border-radius:10px;"></div>
+                                                <div class="gallery-photo"><img src="images/natal3.jpg" alt="Natal 3" style="width:100%;height:100%;object-fit:cover;border-radius:10px;"></div>
+                                                <div class="gallery-photo"><img src="images/natal4.jpg" alt="Natal 4" style="width:100%;height:100%;object-fit:cover;border-radius:10px;"></div>
+                                                <div class="gallery-photo"><img src="images/natal5.jpg" alt="Natal 5" style="width:100%;height:100%;object-fit:cover;border-radius:10px;"></div>
+                                                <div class="gallery-photo"><img src="images/natal6.jpg" alt="Natal 6" style="width:100%;height:100%;object-fit:cover;border-radius:10px;"></div>
+                                            `;
+                                            title.textContent = "More good memories together 💕";
+                                            galleryText.textContent = "Hello baby, a little gallery of photos of our memories together ! I hope you like it, I love you so much and Eu te amo mais don't forget !❤️";
+                                    } else {
+                                            grid.innerHTML = `
+                                                <div class="gallery-photo"><img src="images/photo1.jpg" alt="Photo 1" style="width:100%;height:100%;object-fit:cover;border-radius:10px;"></div>
+                                                <div class="gallery-photo"><img src="images/photo2.jpg" alt="Photo 2" style="width:100%;height:100%;object-fit:cover;border-radius:10px;"></div>
+                                                <div class="gallery-photo"><img src="images/photo3.jpg" alt="Photo 3" style="width:100%;height:100%;object-fit:cover;border-radius:10px;"></div>
+                                                <div class="gallery-photo"><img src="images/photo4.jpg" alt="Photo 4" style="width:100%;height:100%;object-fit:cover;border-radius:10px;"></div>
+                                                <div class="gallery-photo"><img src="images/photo5.jpg" alt="Photo 5" style="width:100%;height:100%;object-fit:cover;border-radius:10px;"></div>
+                                                <div class="gallery-photo"><img src="images/photo6.jpg" alt="Photo 6" style="width:100%;height:100%;object-fit:cover;border-radius:10px;"></div>
+                                            `;
+                                            title.textContent = "Our Beautiful Memories 📸";
+                                            galleryText.textContent = "love you so much baby, remember of the photo of the first day we met! I hope you like this little photo gallery! ❤️";
+                                    }
+                        gallery.classList.add('show');
+        }
+
+        // Fermer la galerie
+        function closeGallery() {
+            const gallery = document.getElementById('photoGallery');
+            gallery.classList.remove('show');
+        }
+
+        // Explosion d'amour avec le bouton "Je t'aime"
+        function loveExplosion() {
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.innerHTML = ['💕', '💖', '💗', '💝', '💘'][Math.floor(Math.random() * 5)];
+                    heart.style.position = 'fixed';
+                    heart.style.left = Math.random() * window.innerWidth + 'px';
+                    heart.style.top = Math.random() * window.innerHeight + 'px';
+                    heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
+                    heart.style.pointerEvents = 'none';
+                    heart.style.zIndex = '9999';
+                    
+                    document.body.appendChild(heart);
+                    
+                    heart.animate([
+                        { 
+                            transform: 'scale(0) rotate(0deg)',
+                            opacity: 1
+                        },
+                        { 
+                            transform: 'scale(1.5) rotate(360deg)',
+                            opacity: 0
+                        }
+                    ], {
+                        duration: 2000,
+                        easing: 'ease-out'
+                    }).onfinish = () => {
+                        heart.remove();
+                    };
+                }, i * 100);
+            }
+        }
+
+        // Créer une explosion de cœurs quand on ouvre une case
+        function createHeartExplosion(element) {
+            const rect = element.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            for (let i = 0; i < 8; i++) {
+                const heart = document.createElement('div');
+                heart.innerHTML = '💕';
+                heart.style.position = 'fixed';
+                heart.style.left = centerX + 'px';
+                heart.style.top = centerY + 'px';
+                heart.style.fontSize = '20px';
+                heart.style.pointerEvents = 'none';
+                heart.style.zIndex = '999';
+                heart.style.color = '#ff69b4';
+                
+                const angle = (i * 45) * Math.PI / 180;
+                const distance = 100;
+                const endX = centerX + Math.cos(angle) * distance;
+                const endY = centerY + Math.sin(angle) * distance;
+                
+                document.body.appendChild(heart);
+                
+                heart.animate([
+                    { 
+                        transform: 'translate(0, 0) scale(0.5) rotate(0deg)',
+                        opacity: 1
+                    },
+                    { 
+                        transform: `translate(${endX - centerX}px, ${endY - centerY}px) scale(1.2) rotate(360deg)`,
+                        opacity: 0
+                    }
+                ], {
+                    duration: 1000,
+                    easing: 'ease-out'
+                }).onfinish = () => {
+                    heart.remove();
+                };
+            }
+        }
+
+        // Créer les éléments qui tombent (cœurs, fleurs, confettis)
+        function createFallingElement() {
+            const element = document.createElement('div');
+            element.className = 'heart';
+            
+            const random = Math.random();
+            if (random < 0.6) {
+                element.innerHTML = '❤️';
+            } else if (random < 0.85) {
+                element.innerHTML = '🌸';
+            } else {
+                element.innerHTML = '🎉';
+            }
+            
+            element.style.left = Math.random() * 100 + '%';
+            element.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            element.style.fontSize = (Math.random() * 10 + 15) + 'px';
+            
+            document.getElementById('heartsContainer').appendChild(element);
+            
+            setTimeout(() => {
+                element.remove();
+            }, 5000);
+        }
+
+        // Fermer les modals en cliquant à l'extérieur
+        document.getElementById('modal').addEventListener('click', (e) => {
+            if (e.target.id === 'modal') {
+                closeModal();
+            }
+        });
+
+        document.getElementById('photoGallery').addEventListener('click', (e) => {
+            if (e.target.id === 'photoGallery') {
+                closeGallery();
+            }
+        });
+
+        // Initialiser tout
+        document.addEventListener('DOMContentLoaded', () => {
+            createCalendar();
+            animateCounter();
+            createShootingStars();
+        });
+        
+        // Créer des éléments qui tombent régulièrement
+        setInterval(createFallingElement, 800);
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97d54cf71507a251',t:'MTc1NzU3NDE1OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
